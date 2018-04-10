@@ -7,14 +7,18 @@ from keras.utils import to_categorical
 (pixel_train, label_train), (pixel_test, label_test) = mnist.load_data()
 pixel_train = pixel_train.reshape(60000, 784)
 pixel_test = pixel_test.reshape(10000, 784)
+pixel_train = pixel_train.astype('float32')
+pixel_test = pixel_test.astype('float32')
+pixel_train /= 255
+pixel_test /= 255
 label_train = to_categorical(label_train, 10)
 label_test = to_categorical(label_test, 10)
 
 # define model
 model = Sequential([
-  Dense(256, activation='sigmoid', input_dim=784, use_bias=True),
+  Dense(256, activation='relu', input_dim=784, use_bias=True),
   Dropout(0.2),
-  Dense(32, activation='sigmoid'),
+  Dense(32, activation='relu'),
   Dropout(0.2),
   Dense(10, activation='softmax')
 ])
@@ -32,7 +36,8 @@ model.fit(
   pixel_train,
   label_train,
   epochs=20,
-  batch_size=128
+  batch_size=128,
+  validation_data=(pixel_test, label_test)
 )
 
 # evaluate model with test data
